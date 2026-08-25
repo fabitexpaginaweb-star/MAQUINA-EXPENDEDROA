@@ -9,7 +9,6 @@
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-<script src="https://unpkg.com/lucide@latest"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;}
@@ -19,10 +18,8 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;}
 .glass{background:rgba(30,41,59,0.85);backdrop-filter:blur(12px);}
 .card-hover{transition:all .2s ease;}
 .card-hover:hover{transform:translateY(-2px);box-shadow:0 10px 40px rgba(0,0,0,.3);}
-.animate-pulse-slow{animation:pulse 3s cubic-bezier(.4,0,.6,1) infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
-.badge-best{background:linear-gradient(135deg,#10b981,#059669);}
-.badge-worst{background:linear-gradient(135deg,#ef4444,#dc2626);}
+.animate-pulse-slow{animation:pulse 3s cubic-bezier(.4,0,.6,1) infinite;}
 </style>
 </head>
 <body class="min-h-screen">
@@ -32,60 +29,60 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;}
 const {useState,useEffect,useMemo,useCallback} = React;
 
 // ============================================================
-// DATOS INICIALES - PRODUCTOS DEL EXCEL (48 ÚNICOS)
+// DATOS INICIALES - PRODUCTOS (48 ÚNICOS)
 // ============================================================
 const INITIAL_PRODUCTS = [
-  // DULCEZA (26 productos originales)
-  {id:"1",name:"SPORADE MANZANA",category:"Bebidas",stock:12,price:0.50,suppliers:{DULCEZA:{cost:0.434,qty:12}},salesCount:0,totalSales:0,image:"./SPORADE BLANCO.png"},
-  {id:"2",name:"SPORADE FRUTOS TROPICALES",category:"Bebidas",stock:12,price:0.50,suppliers:{DULCEZA:{cost:0.434,qty:12}},salesCount:0,totalSales:0,image:"./SPORADE ROJO.jpg"},
-  {id:"3",name:"YOGURT TONI GRANDE",category:"Lácteos",stock:10,price:1.00,suppliers:{DULCEZA:{cost:0.84,qty:4},TITAN:{cost:0.791,qty:6}},salesCount:0,totalSales:0},
-  {id:"4",name:"YOGURT TONI PEQUEÑO",category:"Lácteos",stock:6,price:0.60,suppliers:{DULCEZA:{cost:0.50,qty:6}},salesCount:0,totalSales:0},
-  {id:"5",name:"COCA COLA BOMBA",category:"Bebidas",stock:24,price:0.50,suppliers:{DULCEZA:{cost:0.45,qty:12},TITAN:{cost:0.409,qty:12}},salesCount:0,totalSales:0},
-  {id:"6",name:"MOOW GOMITAS",category:"Dulces",stock:12,price:0.75,suppliers:{DULCEZA:{cost:0.40,qty:12}},salesCount:0,totalSales:0},
-  {id:"7",name:"GOMITAS GRISSLY",category:"Dulces",stock:7,price:0.75,suppliers:{DULCEZA:{cost:0.55,qty:7}},salesCount:0,totalSales:0,image:"./gomitas.png"},
-  {id:"8",name:"GALAK",category:"Chocolates",stock:21,price:0.50,suppliers:{DULCEZA:{cost:0.2852,qty:21}},salesCount:0,totalSales:0,image:"./GALAK BLANCO.jpg"},
-  {id:"9",name:"OREO PEQUEÑA",category:"Galletas",stock:12,price:0.50,suppliers:{DULCEZA:{cost:0.30,qty:12}},salesCount:0,totalSales:0,image:"./oreo de 6.jpg"},
-  {id:"10",name:"TANGO",category:"Galletas",stock:25,price:0.50,suppliers:{DULCEZA:{cost:0.25,qty:25}},salesCount:0,totalSales:0,image:"./TANGO.png"},
-  {id:"11",name:"OREO ROLLO",category:"Galletas",stock:5,price:1.00,suppliers:{DULCEZA:{cost:0.72,qty:5}},salesCount:0,totalSales:0},
-  {id:"12",name:"MIAS CHOCOLATE",category:"Galletas",stock:7,price:0.50,suppliers:{DULCEZA:{cost:0.33,qty:7}},salesCount:0,totalSales:0,image:"./MIAS DE CHOCOLATE.png"},
-  {id:"13",name:"MIAS VAINILLA",category:"Galletas",stock:7,price:0.50,suppliers:{DULCEZA:{cost:0.33,qty:7}},salesCount:0,totalSales:0},
-  {id:"14",name:"CHOCO CHIPS 222 GR",category:"Galletas",stock:6,price:0.50,suppliers:{DULCEZA:{cost:0.39,qty:6}},salesCount:0,totalSales:0},
-  {id:"15",name:"LECHE TONI FRESA",category:"Lácteos",stock:2,price:1.00,suppliers:{DULCEZA:{cost:0.85,qty:2}},salesCount:0,totalSales:0,image:"./FRUTILLA.png"},
-  {id:"16",name:"LECHE TONI CHOCOLATE",category:"Lácteos",stock:2,price:2.00,suppliers:{DULCEZA:{cost:0.85,qty:2}},salesCount:0,totalSales:0,image:"./CHOCOLATADA.jpg"},
-  {id:"17",name:"DORITOS QUESO",category:"Snacks",stock:8,price:0.75,suppliers:{DULCEZA:{cost:0.55,qty:8}},salesCount:0,totalSales:0,image:"./DORITOS DE QUESO.png"},
-  {id:"18",name:"DR. LOOK ROLIN",category:"Dulces",stock:6,price:1.00,suppliers:{DULCEZA:{cost:0.82,qty:6}},salesCount:0,totalSales:0,image:"./DR LOOK.png"},
-  {id:"19",name:"PIPA NIC LIMON",category:"Snacks",stock:10,price:0.25,suppliers:{DULCEZA:{cost:0.195,qty:10}},salesCount:0,totalSales:0},
-  {id:"20",name:"PIPA NIC NATURAL",category:"Snacks",stock:10,price:1.25,suppliers:{DULCEZA:{cost:0.195,qty:10}},salesCount:0,totalSales:0},
-  {id:"21",name:"AGUAS CIELO SABORES",category:"Bebidas",stock:18,price:0.50,suppliers:{DULCEZA:{cost:0.31,qty:18}},salesCount:0,totalSales:0,image:"./CIELO ROSA.png"},
-  {id:"22",name:"VIVE 100 300 ML",category:"Bebidas",stock:24,price:0.50,suppliers:{DULCEZA:{cost:0.46,qty:24}},salesCount:0,totalSales:0,image:"./VIVE 100 DOLAR.png"},
-  {id:"23",name:"CUA CUA",category:"Chocolates",stock:6,price:0.60,suppliers:{DULCEZA:{cost:0.39,qty:6}},salesCount:0,totalSales:0,image:"./CUA CUA.jpg"},
-  {id:"24",name:"DE TODITO PICANTE",category:"Snacks",stock:8,price:0.85,suppliers:{DULCEZA:{cost:0.63,qty:8}},salesCount:0,totalSales:0,image:"./de todito picante.jpg"},
-  {id:"25",name:"CHOCO CHIPS MINI",category:"Galletas",stock:6,price:0.50,suppliers:{DULCEZA:{cost:0.39,qty:6}},salesCount:0,totalSales:0},
-  {id:"26",name:"DE TODITO NATURAL",category:"Snacks",stock:8,price:0.85,suppliers:{DULCEZA:{cost:0.63,qty:8}},salesCount:0,totalSales:0,image:"./de todito natural.png"},
+  // DULCEZA (26 productos)
+  {id:"1",name:"SPORADE MANZANA",category:"Bebidas",stock:12,price:0.50,suppliers:{DULCEZA:{cost:0.434,qty:12}},salesCount:0,totalSales:0,image:"./images/sporade-blanco.png"},
+  {id:"2",name:"SPORADE FRUTOS TROPICALES",category:"Bebidas",stock:12,price:0.50,suppliers:{DULCEZA:{cost:0.434,qty:12}},salesCount:0,totalSales:0,image:"./images/sporade-rojo.png"},
+  {id:"3",name:"YOGURT TONI GRANDE",category:"Lácteos",stock:10,price:1.00,suppliers:{DULCEZA:{cost:0.84,qty:4},TITAN:{cost:0.791,qty:6}},salesCount:0,totalSales:0,image:"./images/avena-toni.png"},
+  {id:"4",name:"YOGURT TONI PEQUEÑO",category:"Lácteos",stock:6,price:0.60,suppliers:{DULCEZA:{cost:0.50,qty:6}},salesCount:0,totalSales:0,image:"./images/avena.png"},
+  {id:"5",name:"COCA COLA BOMBA",category:"Bebidas",stock:24,price:0.50,suppliers:{DULCEZA:{cost:0.45,qty:12},TITAN:{cost:0.409,qty:12}},salesCount:0,totalSales:0,image:"./images/v220-dolar.png"},
+  {id:"6",name:"MOOW GOMITAS",category:"Dulces",stock:12,price:0.75,suppliers:{DULCEZA:{cost:0.40,qty:12}},salesCount:0,totalSales:0,image:"./images/gomitas.png"},
+  {id:"7",name:"GOMITAS GRISSLY",category:"Dulces",stock:7,price:0.75,suppliers:{DULCEZA:{cost:0.55,qty:7}},salesCount:0,totalSales:0,image:"./images/gomitas.png"},
+  {id:"8",name:"GALAK",category:"Chocolates",stock:21,price:0.50,suppliers:{DULCEZA:{cost:0.2852,qty:21}},salesCount:0,totalSales:0,image:"./images/galak-blanco.png"},
+  {id:"9",name:"OREO PEQUEÑA",category:"Galletas",stock:12,price:0.50,suppliers:{DULCEZA:{cost:0.30,qty:12}},salesCount:0,totalSales:0,image:"./images/oreo-de-6.jpg"},
+  {id:"10",name:"TANGO",category:"Galletas",stock:25,price:0.50,suppliers:{DULCEZA:{cost:0.25,qty:25}},salesCount:0,totalSales:0,image:"./images/tango.png"},
+  {id:"11",name:"OREO ROLLO",category:"Galletas",stock:5,price:1.00,suppliers:{DULCEZA:{cost:0.72,qty:5}},salesCount:0,totalSales:0,image:"./images/chips-ahoy.png"},
+  {id:"12",name:"MIAS CHOCOLATE",category:"Galletas",stock:7,price:0.50,suppliers:{DULCEZA:{cost:0.33,qty:7}},salesCount:0,totalSales:0,image:"./images/mias-de-chocolate.png"},
+  {id:"13",name:"MIAS VAINILLA",category:"Galletas",stock:7,price:0.50,suppliers:{DULCEZA:{cost:0.33,qty:7}},salesCount:0,totalSales:0,image:"./images/mias-de-chocolate.png"},
+  {id:"14",name:"CHOCO CHIPS 222 GR",category:"Galletas",stock:6,price:0.50,suppliers:{DULCEZA:{cost:0.39,qty:6}},salesCount:0,totalSales:0,image:"./images/choco-chips-222gr.png"},
+  {id:"15",name:"LECHE TONI FRESA",category:"Lácteos",stock:2,price:1.00,suppliers:{DULCEZA:{cost:0.85,qty:2}},salesCount:0,totalSales:0,image:"./images/frutilla.png"},
+  {id:"16",name:"LECHE TONI CHOCOLATE",category:"Lácteos",stock:2,price:2.00,suppliers:{DULCEZA:{cost:0.85,qty:2}},salesCount:0,totalSales:0,image:"./images/chocolatada.jpg"},
+  {id:"17",name:"DORITOS QUESO",category:"Snacks",stock:8,price:0.75,suppliers:{DULCEZA:{cost:0.55,qty:8}},salesCount:0,totalSales:0,image:"./images/doritos-de-queso.png"},
+  {id:"18",name:"DR. LOOK ROLIN",category:"Dulces",stock:6,price:1.00,suppliers:{DULCEZA:{cost:0.82,qty:6}},salesCount:0,totalSales:0,image:"./images/dr-look.png"},
+  {id:"19",name:"PIPA NIC LIMON",category:"Snacks",stock:10,price:0.25,suppliers:{DULCEZA:{cost:0.195,qty:10}},salesCount:0,totalSales:0,image:"./images/rizadas-de-limon.png"},
+  {id:"20",name:"PIPA NIC NATURAL",category:"Snacks",stock:10,price:1.25,suppliers:{DULCEZA:{cost:0.195,qty:10}},salesCount:0,totalSales:0,image:"./images/rizadas-de-pollo.png"},
+  {id:"21",name:"AGUAS CIELO SABORES",category:"Bebidas",stock:18,price:0.50,suppliers:{DULCEZA:{cost:0.31,qty:18}},salesCount:0,totalSales:0,image:"./images/cielo-rosa.png"},
+  {id:"22",name:"VIVE 100 300 ML",category:"Bebidas",stock:24,price:0.50,suppliers:{DULCEZA:{cost:0.46,qty:24}},salesCount:0,totalSales:0,image:"./images/vive-100-dolar.png"},
+  {id:"23",name:"CUA CUA",category:"Chocolates",stock:6,price:0.60,suppliers:{DULCEZA:{cost:0.39,qty:6}},salesCount:0,totalSales:0,image:"./images/cua-cua.png"},
+  {id:"24",name:"DE TODITO PICANTE",category:"Snacks",stock:8,price:0.85,suppliers:{DULCEZA:{cost:0.63,qty:8}},salesCount:0,totalSales:0,image:"./images/de-todito-picante.jpg"},
+  {id:"25",name:"CHOCO CHIPS MINI",category:"Galletas",stock:6,price:0.50,suppliers:{DULCEZA:{cost:0.39,qty:6}},salesCount:0,totalSales:0,image:"./images/choco-chips-mini.png"},
+  {id:"26",name:"DE TODITO NATURAL",category:"Snacks",stock:8,price:0.85,suppliers:{DULCEZA:{cost:0.63,qty:8}},salesCount:0,totalSales:0,image:"./images/de-todito-natural.png"},
   // SUPERMAXI (5 productos)
-  {id:"27",name:"FORESTEA FRESA LIM",category:"Bebidas",stock:12,price:0.75,suppliers:{SUPERMAXI:{cost:0.3493,qty:6},TITAN:{cost:0.418,qty:6}},salesCount:0,totalSales:0,image:"./Forestea Frutos tropicales.png"},
-  {id:"28",name:"BRIZO BEBIDA LIMA",category:"Bebidas",stock:4,price:1.25,suppliers:{SUPERMAXI:{cost:0.5978,qty:4}},salesCount:0,totalSales:0},
-  {id:"29",name:"IMPERIAL LATA LIMONADA",category:"Bebidas",stock:10,price:1.50,suppliers:{SUPERMAXI:{cost:0.8565,qty:10}},salesCount:0,totalSales:0,image:"./IMPERIAL LIMON LATA.png"},
-  {id:"30",name:"SAVILOE",category:"Bebidas",stock:6,price:1.00,suppliers:{SUPERMAXI:{cost:0.63,qty:6}},salesCount:0,totalSales:0,image:"./SAVILOE.png"},
-  {id:"31",name:"COCA COLA LATA",category:"Bebidas",stock:8,price:1.50,suppliers:{SUPERMAXI:{cost:0.8812,qty:8}},salesCount:0,totalSales:0},
+  {id:"27",name:"FORESTEA FRESA LIM",category:"Bebidas",stock:12,price:0.75,suppliers:{SUPERMAXI:{cost:0.3493,qty:6},TITAN:{cost:0.418,qty:6}},salesCount:0,totalSales:0,image:"./images/forestea-frutos-tropicales.png"},
+  {id:"28",name:"BRIZO BEBIDA LIMA",category:"Bebidas",stock:4,price:1.25,suppliers:{SUPERMAXI:{cost:0.5978,qty:4}},salesCount:0,totalSales:0,image:"./images/v220-de-lima.png"},
+  {id:"29",name:"IMPERIAL LATA LIMONADA",category:"Bebidas",stock:10,price:1.50,suppliers:{SUPERMAXI:{cost:0.8565,qty:10}},salesCount:0,totalSales:0,image:"./images/imperial-limon-lata.png"},
+  {id:"30",name:"SAVILOE",category:"Bebidas",stock:6,price:1.00,suppliers:{SUPERMAXI:{cost:0.63,qty:6}},salesCount:0,totalSales:0,image:"./images/saviloe.png"},
+  {id:"31",name:"COCA COLA LATA",category:"Bebidas",stock:8,price:1.50,suppliers:{SUPERMAXI:{cost:0.8812,qty:8}},salesCount:0,totalSales:0,image:"./images/sprite.png"},
   // TITAN (productos únicos)
-  {id:"32",name:"PIPA NIC",category:"Snacks",stock:24,price:0.30,suppliers:{TITAN:{cost:0.175,qty:24}},salesCount:0,totalSales:0},
-  {id:"33",name:"NUTELLA B READ",category:"Chocolates",stock:10,price:0.75,suppliers:{TITAN:{cost:0.649,qty:10}},salesCount:0,totalSales:0,image:"./NUTELLA B READY.jpg"},
-  {id:"34",name:"CHETOS CHEESE TRI",category:"Snacks",stock:12,price:0.30,suppliers:{TITAN:{cost:0.215,qty:12}},salesCount:0,totalSales:0,image:"./cheese tris.jpg"},
-  {id:"35",name:"KINDEY JOY NIN",category:"Chocolates",stock:12,price:1.50,suppliers:{TITAN:{cost:1.0717,qty:12}},salesCount:0,totalSales:0,image:"./KINDER.png"},
-  {id:"36",name:"TOSTITOS NACHOS",category:"Snacks",stock:6,price:0.75,suppliers:{TITAN:{cost:0.555,qty:6}},salesCount:0,totalSales:0,image:"./tostitos nachos.jpg"},
-  {id:"37",name:"MONSTER ULTRA",category:"Bebidas",stock:6,price:3.00,suppliers:{TITAN:{cost:2.456,qty:6}},salesCount:0,totalSales:0,image:"./monster energy.png"},
-  {id:"38",name:"PULP DURAZNO",category:"Bebidas",stock:12,price:0.50,suppliers:{TITAN:{cost:0.325,qty:12}},salesCount:0,totalSales:0,image:"./PULP.jpg"},
-  {id:"39",name:"ALPINA BONYOURT",category:"Lácteos",stock:3,price:1.00,suppliers:{TITAN:{cost:0.793,qty:3}},salesCount:0,totalSales:0,image:"./BON YOURT.jpg"},
-  {id:"40",name:"DORITOS LIM GRANDE",category:"Snacks",stock:8,price:1.00,suppliers:{TITAN:{cost:0.827,qty:8}},salesCount:0,totalSales:0,image:"./doritos limon.png"},
-  {id:"41",name:"LAYS ARTESANAS",category:"Snacks",stock:6,price:0.65,suppliers:{TITAN:{cost:0.481,qty:6}},salesCount:0,totalSales:0,image:"./LAYS ARTESANALES.png"},
-  {id:"42",name:"EL ARTESANAL CEBOLLA Y CREMA",category:"Snacks",stock:6,price:0.65,suppliers:{TITAN:{cost:0.303,qty:6}},salesCount:0,totalSales:0,image:"./PAPAS ARTESANALES CREMA Y CEBOLLA.png"},
-  {id:"43",name:"IMPERIAL AGUA PEQUEÑA LIMON",category:"Bebidas",stock:6,price:0.50,suppliers:{TITAN:{cost:0.418,qty:6}},salesCount:0,totalSales:0,image:"./IMPERIAL LIMON PEQUE.png"},
-  {id:"44",name:"BIRI BIRI",category:"Snacks",stock:6,price:1.00,suppliers:{TITAN:{cost:0.845,qty:6}},salesCount:0,totalSales:0,image:"./BIRI BIRI.png"},
-  {id:"45",name:"CHIPS AHOY PEQUEÑAS",category:"Galletas",stock:6,price:0.50,suppliers:{TITAN:{cost:0.455,qty:6}},salesCount:0,totalSales:0,image:"./CHIPS AHOY 50.jpg"},
-  {id:"46",name:"FESTIVAL GALLETA FRESA",category:"Galletas",stock:6,price:0.50,suppliers:{TITAN:{cost:0.281,qty:6}},salesCount:0,totalSales:0,image:"./FEDTIVAL FRESA.png"},
-  {id:"47",name:"PULPARINDO SANDIA",category:"Dulces",stock:20,price:0.60,suppliers:{TITAN:{cost:0.29,qty:20}},salesCount:0,totalSales:0,image:"./PULPARINDO.png"},
-  {id:"48",name:"220 ORIGINAL PEQUEÑO",category:"Snacks",stock:24,price:0.50,suppliers:{TITAN:{cost:0.441,qty:24}},salesCount:0,totalSales:0,image:"./V220 PEQUEÑO.png"}
+  {id:"32",name:"PIPA NIC",category:"Snacks",stock:24,price:0.30,suppliers:{TITAN:{cost:0.175,qty:24}},salesCount:0,totalSales:0,image:"./images/natu-chips.png"},
+  {id:"33",name:"NUTELLA B READ",category:"Chocolates",stock:10,price:0.75,suppliers:{TITAN:{cost:0.649,qty:10}},salesCount:0,totalSales:0,image:"./images/nutella-b-ready.jpg"},
+  {id:"34",name:"CHETOS CHEESE TRI",category:"Snacks",stock:12,price:0.30,suppliers:{TITAN:{cost:0.215,qty:12}},salesCount:0,totalSales:0,image:"./images/cheese-tris.jpg"},
+  {id:"35",name:"KINDEY JOY NIN",category:"Chocolates",stock:12,price:1.50,suppliers:{TITAN:{cost:1.0717,qty:12}},salesCount:0,totalSales:0,image:"./images/kinder.png"},
+  {id:"36",name:"TOSTITOS NACHOS",category:"Snacks",stock:6,price:0.75,suppliers:{TITAN:{cost:0.555,qty:6}},salesCount:0,totalSales:0,image:"./images/tostitos-nachos.png"},
+  {id:"37",name:"MONSTER ULTRA",category:"Bebidas",stock:6,price:3.00,suppliers:{TITAN:{cost:2.456,qty:6}},salesCount:0,totalSales:0,image:"./images/monster-energy.png"},
+  {id:"38",name:"PULP DURAZNO",category:"Bebidas",stock:12,price:0.50,suppliers:{TITAN:{cost:0.325,qty:12}},salesCount:0,totalSales:0,image:"./images/pulp.png"},
+  {id:"39",name:"ALPINA BONYOURT",category:"Lácteos",stock:3,price:1.00,suppliers:{TITAN:{cost:0.793,qty:3}},salesCount:0,totalSales:0,image:"./images/bon-yourt.png"},
+  {id:"40",name:"DORITOS LIM GRANDE",category:"Snacks",stock:8,price:1.00,suppliers:{TITAN:{cost:0.827,qty:8}},salesCount:0,totalSales:0,image:"./images/doritos-limon.png"},
+  {id:"41",name:"LAYS ARTESANAS",category:"Snacks",stock:6,price:0.65,suppliers:{TITAN:{cost:0.481,qty:6}},salesCount:0,totalSales:0,image:"./images/lays-artesanales.png"},
+  {id:"42",name:"EL ARTESANAL CEBOLLA Y CREMA",category:"Snacks",stock:6,price:0.65,suppliers:{TITAN:{cost:0.303,qty:6}},salesCount:0,totalSales:0,image:"./images/papas-artesanales-crema-y-cebolla.png"},
+  {id:"43",name:"IMPERIAL AGUA PEQUEÑA LIMON",category:"Bebidas",stock:6,price:0.50,suppliers:{TITAN:{cost:0.418,qty:6}},salesCount:0,totalSales:0,image:"./images/imperial-limon-peque.png"},
+  {id:"44",name:"BIRI BIRI",category:"Snacks",stock:6,price:1.00,suppliers:{TITAN:{cost:0.845,qty:6}},salesCount:0,totalSales:0,image:"./images/biri-biri.png"},
+  {id:"45",name:"CHIPS AHOY PEQUEÑAS",category:"Galletas",stock:6,price:0.50,suppliers:{TITAN:{cost:0.455,qty:6}},salesCount:0,totalSales:0,image:"./images/chips-ahoy-50.jpg"},
+  {id:"46",name:"FESTIVAL GALLETA FRESA",category:"Galletas",stock:6,price:0.50,suppliers:{TITAN:{cost:0.281,qty:6}},salesCount:0,totalSales:0,image:"./images/fedtival-fresa.png"},
+  {id:"47",name:"PULPARINDO SANDIA",category:"Dulces",stock:20,price:0.60,suppliers:{TITAN:{cost:0.29,qty:20}},salesCount:0,totalSales:0,image:"./images/pulparindo.png"},
+  {id:"48",name:"220 ORIGINAL PEQUEÑO",category:"Snacks",stock:24,price:0.50,suppliers:{TITAN:{cost:0.441,qty:24}},salesCount:0,totalSales:0,image:"./images/v220-pequeno.png"}
 ];
 
 const INITIAL_SUPPLIERS = [
@@ -137,6 +134,17 @@ function getAvgCost(product){
 }
 
 // ============================================================
+// COMPONENTE: IMAGEN SEGURA (no destruye el DOM al fallar)
+// ============================================================
+function SafeImage({src,alt,className}){
+  const [error,setError]=useState(false);
+  if(error||!src){
+    return <span className="text-3xl">📦</span>;
+  }
+  return <img src={src} alt={alt} className={className} onError={()=>setError(true)} loading="lazy" />;
+}
+
+// ============================================================
 // COMPONENTES DE PÁGINA
 // ============================================================
 
@@ -181,7 +189,7 @@ function MachinePage({products,setProducts}){
   const [filter,setFilter]=useState("");
   const [cat,setCat]=useState("Todas");
   const [search,setSearch]=useState("");
-  const [sellModal,setSellModal]=useState(null); // {product:null, qty:1}
+  const [sellModal,setSellModal]=useState(null);
   const cats=["Todas",...new Set(products.map(p=>p.category))];
   const filtered=products.filter(p=>(cat==="Todas"||p.category===cat)&&p.name.toLowerCase().includes(filter.toLowerCase())&&p.name.toLowerCase().includes(search.toLowerCase()));
 
@@ -209,34 +217,32 @@ function MachinePage({products,setProducts}){
   return (
     <div className="max-w-6xl mx-auto px-3 py-4 safe-bottom relative">
       <div className="mb-4">
-      <input 
-        type="text" 
-        value={search} 
-        onChange={e=>setSearch(e.target.value)} 
-        placeholder="🔍 Buscar producto..." 
-        className="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-2.5 text-sm text-white mb-3 focus:outline-none focus:border-orange-500 transition"
-      />
-      <div className="flex gap-2 overflow-x-auto pb-1">
-        {cats.map(c=> (
-          <button key={c} onClick={()=>setCat(c)} className={`shrink-0 px-3 py-1 rounded-full text-xs font-medium transition ${cat===c?"bg-slate-700 text-white":"text-slate-400 hover:text-white"}`}>{c}</button>
-        ))}
+        <input 
+          type="text" 
+          value={search} 
+          onChange={e=>setSearch(e.target.value)} 
+          placeholder="🔍 Buscar producto..." 
+          className="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-2.5 text-sm text-white mb-3 focus:outline-none focus:border-orange-500 transition"
+        />
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          {cats.map(c=> (
+            <button key={c} onClick={()=>setCat(c)} className={`shrink-0 px-3 py-1 rounded-full text-xs font-medium transition ${cat===c?"bg-slate-700 text-white":"text-slate-400 hover:text-white"}`}>{c}</button>
+          ))}
+        </div>
       </div>
-    </div>
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
         {filtered.map(p=>{
           const best=getBestSupplier(p);
           const cost=best?best[1].cost:getAvgCost(p);
           const margin=((p.price-cost)/p.price*100).toFixed(1);
           return (
             <div key={p.id} className="bg-slate-800 rounded-xl p-3 card-hover border border-slate-700 relative flex flex-col">
-              {/* Imagen del producto */}
-              <div className="w-full h-32 mb-2 rounded-lg overflow-hidden bg-white/5 flex items-center justify-center relative">
-                {p.image ? (
-                  <img src={p.image} alt={p.name} className="h-full w-full object-contain p-1" onError={e=>{e.target.style.display='none';e.target.parentElement.innerHTML='<span class="text-3xl">📦</span>';}} />
-                ) : (
-                  <span className="text-3xl">📦</span>
-                )}
-                {/* Badge de stock sobre la imagen */}
+              {/* Contenedor de imagen - badges FUERA de la imagen para que siempre se vean */}
+              <div className="relative mb-2">
+                <div className="w-full h-32 rounded-lg overflow-hidden bg-white/5 flex items-center justify-center">
+                  <SafeImage src={p.image} alt={p.name} className="h-full w-full object-contain p-1" />
+                </div>
+                {/* Badge de stock - SIEMPRE VISIBLE, independiente de la imagen */}
                 <span className={`absolute top-1.5 left-1.5 text-[10px] px-2 py-0.5 rounded-full font-bold shadow-lg ${p.stock>5?"bg-emerald-500 text-white":p.stock>0?"bg-amber-500 text-white":"bg-red-500 text-white"}`}>
                   {p.stock} uds
                 </span>
@@ -309,6 +315,7 @@ function MachinePage({products,setProducts}){
     </div>
   );
 }
+
 // ---------- RESUMEN ----------
 function ResumenPage({products}){
   const totalStock=products.reduce((s,p)=>s+p.stock,0);
@@ -562,15 +569,10 @@ function FacturasPage({products,setProducts}){
 // ---------- INFORMES ----------
 function InformesPage({products}){
   const [invoices]=useLocalStorage("invoices",[]);
-  const [salesHistory]=useLocalStorage("salesHistory",[]);
 
   const totalPurchased=invoices.reduce((s,i)=>s+i.total,0);
   const totalSales=products.reduce((s,p)=>s+p.totalSales,0);
   const totalSold=products.reduce((s,p)=>s+p.salesCount,0);
-  const inventoryCost=products.reduce((s,p)=>{
-    const best=getBestSupplier(p);
-    return s+(best?best[1].cost:getAvgCost(p))*p.stock;
-  },0);
   const grossProfit=totalSales-totalPurchased;
   const profitMargin=totalSales>0?((grossProfit/totalSales)*100).toFixed(1):"0.0";
 
@@ -712,18 +714,14 @@ function InformesPage({products}){
 // ---------- PRESUPUESTO INTELIGENTE ----------
 function PresupuestoPage({products,setProducts}){
   const [budget,setBudget]=useLocalStorage("budgetSettings",{});
-  const [showDetail,setShowDetail]=useState(null);
 
-  // Calcular recomendaciones
   const recommendations=products.map(p=>{
     const best=getBestSupplier(p);
     const cost=best?best[1].cost:getAvgCost(p);
     const profit=p.price-cost;
-    const sellRate=p.salesCount>0?p.salesCount:0.1; // evitar div/0
-    const daysSinceStart=1; // simplificado
-    const dailySales=sellRate/daysSinceStart||0.1;
+    const sellRate=p.salesCount>0?p.salesCount:0.1;
+    const dailySales=sellRate;
 
-    // Lógica de presupuesto inteligente
     let recommendedQty=0;
     let status="normal";
     let message="";
@@ -783,7 +781,6 @@ function PresupuestoPage({products,setProducts}){
         </div>
       </div>
 
-      {/* Alertas */}
       {slowProducts.length>0&&(
         <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 mb-4">
           <h3 className="text-sm font-bold text-amber-400 mb-2">⚠️ Productos con Baja Demanda</h3>
@@ -953,15 +950,14 @@ function DatabasePage({products,setProducts}){
 function App(){
   const [page,setPage]=useState("machine");
   const [products,setProducts]=useLocalStorage("vending-products",INITIAL_PRODUCTS,(saved,initial)=>{
-  const map=new Map(initial.map(p=>[p.id,p]));
-  return saved.map(p=>{
-    const orig=map.get(p.id);
-    return orig?{...orig,...p,image:orig.image}:p;
+    const map=new Map(initial.map(p=>[p.id,p]));
+    return saved.map(p=>{
+      const orig=map.get(p.id);
+      return orig?{...orig,...p,image:orig.image}:p;
+    });
   });
-});
   const [suppliers,setSuppliers]=useLocalStorage("vending-suppliers",INITIAL_SUPPLIERS);
 
-  // Reloj
   useEffect(()=>{
     const el=document.getElementById("clock-display");
     if(!el)return;
