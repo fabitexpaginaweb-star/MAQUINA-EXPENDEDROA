@@ -31,58 +31,63 @@ const {useState,useEffect,useMemo,useCallback} = React;
 // ============================================================
 // DATOS INICIALES - PRODUCTOS (48 ÚNICOS)
 // ============================================================
+// Ahora cada producto tiene:
+//   stock          = total general (almacén + máquina)
+//   machineStock   = unidades físicamente en la máquina
+//   warehouseStock = unidades en almacén (calculado: stock - machineStock)
+// ============================================================
 const INITIAL_PRODUCTS = [
   // DULCEZA (26 productos)
-  {id:"1",name:"SPORADE MANZANA",category:"Bebidas",stock:12,price:0.50,suppliers:{DULCEZA:{cost:0.434,qty:12}},salesCount:0,totalSales:0,image:"./PRODUCTOS/SPORADE BLANCO.png"},
-  {id:"2",name:"SPORADE FRUTOS TROPICALES",category:"Bebidas",stock:12,price:0.50,suppliers:{DULCEZA:{cost:0.434,qty:12}},salesCount:0,totalSales:0,image:"./PRODUCTOS/SPORADE ROJO.jpg"},
-  {id:"3",name:"YOGURT TONI GRANDE",category:"Lácteos",stock:10,price:1.00,suppliers:{DULCEZA:{cost:0.84,qty:4},TITAN:{cost:0.791,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/AVENA TONI.png"},
-  {id:"4",name:"YOGURT TONI PEQUEÑO",category:"Lácteos",stock:6,price:0.60,suppliers:{DULCEZA:{cost:0.50,qty:6}},salesCount:0,totalSales:0,image:"./images/avena.png"},
-  {id:"5",name:"COCA COLA BOMBA",category:"Bebidas",stock:24,price:0.50,suppliers:{DULCEZA:{cost:0.45,qty:12},TITAN:{cost:0.409,qty:12}},salesCount:0,totalSales:0,image:"./PRODUCTOS/V220 DOLAR.png"},
-  {id:"6",name:"MOOW GOMITAS",category:"Dulces",stock:12,price:0.75,suppliers:{DULCEZA:{cost:0.40,qty:12}},salesCount:0,totalSales:0,image:"./PRODUCTOS/gomitas.png"},
-  {id:"7",name:"GOMITAS GRISSLY",category:"Dulces",stock:7,price:0.75,suppliers:{DULCEZA:{cost:0.55,qty:7}},salesCount:0,totalSales:0,image:"./PRODUCTOS/gomitas.png"},
-  {id:"8",name:"GALAK",category:"Chocolates",stock:21,price:0.50,suppliers:{DULCEZA:{cost:0.2852,qty:21}},salesCount:0,totalSales:0,image:"./PRODUCTOS/GALAK BLANCO.jpg"},
-  {id:"9",name:"OREO PEQUEÑA",category:"Galletas",stock:12,price:0.50,suppliers:{DULCEZA:{cost:0.30,qty:12}},salesCount:0,totalSales:0,image:"./PRODUCTOS/oreo de 6.jpg"},
-  {id:"10",name:"TANGO",category:"Galletas",stock:25,price:0.50,suppliers:{DULCEZA:{cost:0.25,qty:25}},salesCount:0,totalSales:0,image:"./PRODUCTOS/TANGO.png"},
-  {id:"11",name:"OREO ROLLO",category:"Galletas",stock:5,price:1.00,suppliers:{DULCEZA:{cost:0.72,qty:5}},salesCount:0,totalSales:0,image:"./PRODUCTOS/CHIPS AHOY.png"},
-  {id:"12",name:"MIAS CHOCOLATE",category:"Galletas",stock:7,price:0.50,suppliers:{DULCEZA:{cost:0.33,qty:7}},salesCount:0,totalSales:0,image:"./PRODUCTOS/MIAS DE CHOCOLATE.png"},
-  {id:"13",name:"MIAS VAINILLA",category:"Galletas",stock:7,price:0.50,suppliers:{DULCEZA:{cost:0.33,qty:7}},salesCount:0,totalSales:0,image:"./PRODUCTOS/MIAS DE CHOCOLATE.png"},
-  {id:"14",name:"CHOCO CHIPS 222 GR",category:"Galletas",stock:6,price:0.50,suppliers:{DULCEZA:{cost:0.39,qty:6}},salesCount:0,totalSales:0,image:"./images/choco-chips-222gr.png"},
-  {id:"15",name:"LECHE TONI FRESA",category:"Lácteos",stock:2,price:1.00,suppliers:{DULCEZA:{cost:0.85,qty:2}},salesCount:0,totalSales:0,image:"./PRODUCTOS/FRUTILLA.png"},
-  {id:"16",name:"LECHE TONI CHOCOLATE",category:"Lácteos",stock:2,price:2.00,suppliers:{DULCEZA:{cost:0.85,qty:2}},salesCount:0,totalSales:0,image:"./PRODUCTOS/CHOCOLATADA.jpg"},
-  {id:"17",name:"DORITOS QUESO",category:"Snacks",stock:8,price:0.75,suppliers:{DULCEZA:{cost:0.55,qty:8}},salesCount:0,totalSales:0,image:"./PRODUCTOS/DORITOS DE QUESO.png"},
-  {id:"18",name:"DR. LOOK ROLIN",category:"Dulces",stock:6,price:1.00,suppliers:{DULCEZA:{cost:0.82,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/DR LOOK.png"},
-  {id:"19",name:"PIPA NIC LIMON",category:"Snacks",stock:10,price:0.25,suppliers:{DULCEZA:{cost:0.195,qty:10}},salesCount:0,totalSales:0,image:"./PRODUCTOS/rizadas de limon.jpg"},
-  {id:"20",name:"PIPA NIC NATURAL",category:"Snacks",stock:10,price:1.25,suppliers:{DULCEZA:{cost:0.195,qty:10}},salesCount:0,totalSales:0,image:"./PRODUCTOS/rizadas de pollo.png"},
-  {id:"21",name:"AGUAS CIELO SABORES",category:"Bebidas",stock:18,price:0.50,suppliers:{DULCEZA:{cost:0.31,qty:18}},salesCount:0,totalSales:0,image:"./PRODUCTOS/CIELO ROSA.png"},
-  {id:"22",name:"VIVE 100 300 ML",category:"Bebidas",stock:24,price:0.50,suppliers:{DULCEZA:{cost:0.46,qty:24}},salesCount:0,totalSales:0,image:"./PRODUCTOS/VIVE 100 DOLAR.png"},
-  {id:"23",name:"CUA CUA",category:"Chocolates",stock:6,price:0.60,suppliers:{DULCEZA:{cost:0.39,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/CUA CUA.jpg"},
-  {id:"24",name:"DE TODITO PICANTE",category:"Snacks",stock:8,price:0.85,suppliers:{DULCEZA:{cost:0.63,qty:8}},salesCount:0,totalSales:0,image:"./PRODUCTOS/de todito picante.jpg"},
-  {id:"25",name:"CHOCO CHIPS MINI",category:"Galletas",stock:6,price:0.50,suppliers:{DULCEZA:{cost:0.39,qty:6}},salesCount:0,totalSales:0,image:"./images/choco-chips-mini.png"},
-  {id:"26",name:"DE TODITO NATURAL",category:"Snacks",stock:8,price:0.85,suppliers:{DULCEZA:{cost:0.63,qty:8}},salesCount:0,totalSales:0,image:"./PRODUCTOS/de todito natural.png"},
+  {id:"1",name:"SPORADE MANZANA",category:"Bebidas",stock:12,machineStock:6,price:0.50,suppliers:{DULCEZA:{cost:0.434,qty:12}},salesCount:0,totalSales:0,image:"./PRODUCTOS/SPORADE BLANCO.png"},
+  {id:"2",name:"SPORADE FRUTOS TROPICALES",category:"Bebidas",stock:12,machineStock:6,price:0.50,suppliers:{DULCEZA:{cost:0.434,qty:12}},salesCount:0,totalSales:0,image:"./PRODUCTOS/SPORADE ROJO.jpg"},
+  {id:"3",name:"YOGURT TONI GRANDE",category:"Lácteos",stock:10,machineStock:4,price:1.00,suppliers:{DULCEZA:{cost:0.84,qty:4},TITAN:{cost:0.791,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/AVENA TONI.png"},
+  {id:"4",name:"YOGURT TONI PEQUEÑO",category:"Lácteos",stock:6,machineStock:3,price:0.60,suppliers:{DULCEZA:{cost:0.50,qty:6}},salesCount:0,totalSales:0,image:"./images/avena.png"},
+  {id:"5",name:"COCA COLA BOMBA",category:"Bebidas",stock:24,machineStock:12,price:0.50,suppliers:{DULCEZA:{cost:0.45,qty:12},TITAN:{cost:0.409,qty:12}},salesCount:0,totalSales:0,image:"./PRODUCTOS/V220 DOLAR.png"},
+  {id:"6",name:"MOOW GOMITAS",category:"Dulces",stock:12,machineStock:6,price:0.75,suppliers:{DULCEZA:{cost:0.40,qty:12}},salesCount:0,totalSales:0,image:"./PRODUCTOS/gomitas.png"},
+  {id:"7",name:"GOMITAS GRISSLY",category:"Dulces",stock:7,machineStock:4,price:0.75,suppliers:{DULCEZA:{cost:0.55,qty:7}},salesCount:0,totalSales:0,image:"./PRODUCTOS/gomitas.png"},
+  {id:"8",name:"GALAK",category:"Chocolates",stock:21,machineStock:10,price:0.50,suppliers:{DULCEZA:{cost:0.2852,qty:21}},salesCount:0,totalSales:0,image:"./PRODUCTOS/GALAK BLANCO.jpg"},
+  {id:"9",name:"OREO PEQUEÑA",category:"Galletas",stock:12,machineStock:6,price:0.50,suppliers:{DULCEZA:{cost:0.30,qty:12}},salesCount:0,totalSales:0,image:"./PRODUCTOS/oreo de 6.jpg"},
+  {id:"10",name:"TANGO",category:"Galletas",stock:25,machineStock:12,price:0.50,suppliers:{DULCEZA:{cost:0.25,qty:25}},salesCount:0,totalSales:0,image:"./PRODUCTOS/TANGO.png"},
+  {id:"11",name:"OREO ROLLO",category:"Galletas",stock:5,machineStock:3,price:1.00,suppliers:{DULCEZA:{cost:0.72,qty:5}},salesCount:0,totalSales:0,image:"./PRODUCTOS/CHIPS AHOY.png"},
+  {id:"12",name:"MIAS CHOCOLATE",category:"Galletas",stock:7,machineStock:4,price:0.50,suppliers:{DULCEZA:{cost:0.33,qty:7}},salesCount:0,totalSales:0,image:"./PRODUCTOS/MIAS DE CHOCOLATE.png"},
+  {id:"13",name:"MIAS VAINILLA",category:"Galletas",stock:7,machineStock:4,price:0.50,suppliers:{DULCEZA:{cost:0.33,qty:7}},salesCount:0,totalSales:0,image:"./PRODUCTOS/MIAS DE CHOCOLATE.png"},
+  {id:"14",name:"CHOCO CHIPS 222 GR",category:"Galletas",stock:6,machineStock:3,price:0.50,suppliers:{DULCEZA:{cost:0.39,qty:6}},salesCount:0,totalSales:0,image:"./images/choco-chips-222gr.png"},
+  {id:"15",name:"LECHE TONI FRESA",category:"Lácteos",stock:2,machineStock:2,price:1.00,suppliers:{DULCEZA:{cost:0.85,qty:2}},salesCount:0,totalSales:0,image:"./PRODUCTOS/FRUTILLA.png"},
+  {id:"16",name:"LECHE TONI CHOCOLATE",category:"Lácteos",stock:2,machineStock:2,price:2.00,suppliers:{DULCEZA:{cost:0.85,qty:2}},salesCount:0,totalSales:0,image:"./PRODUCTOS/CHOCOLATADA.jpg"},
+  {id:"17",name:"DORITOS QUESO",category:"Snacks",stock:8,machineStock:4,price:0.75,suppliers:{DULCEZA:{cost:0.55,qty:8}},salesCount:0,totalSales:0,image:"./PRODUCTOS/DORITOS DE QUESO.png"},
+  {id:"18",name:"DR. LOOK ROLIN",category:"Dulces",stock:6,machineStock:3,price:1.00,suppliers:{DULCEZA:{cost:0.82,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/DR LOOK.png"},
+  {id:"19",name:"PIPA NIC LIMON",category:"Snacks",stock:10,machineStock:5,price:0.25,suppliers:{DULCEZA:{cost:0.195,qty:10}},salesCount:0,totalSales:0,image:"./PRODUCTOS/rizadas de limon.jpg"},
+  {id:"20",name:"PIPA NIC NATURAL",category:"Snacks",stock:10,machineStock:5,price:1.25,suppliers:{DULCEZA:{cost:0.195,qty:10}},salesCount:0,totalSales:0,image:"./PRODUCTOS/rizadas de pollo.png"},
+  {id:"21",name:"AGUAS CIELO SABORES",category:"Bebidas",stock:18,machineStock:9,price:0.50,suppliers:{DULCEZA:{cost:0.31,qty:18}},salesCount:0,totalSales:0,image:"./PRODUCTOS/CIELO ROSA.png"},
+  {id:"22",name:"VIVE 100 300 ML",category:"Bebidas",stock:24,machineStock:12,price:0.50,suppliers:{DULCEZA:{cost:0.46,qty:24}},salesCount:0,totalSales:0,image:"./PRODUCTOS/VIVE 100 DOLAR.png"},
+  {id:"23",name:"CUA CUA",category:"Chocolates",stock:6,machineStock:3,price:0.60,suppliers:{DULCEZA:{cost:0.39,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/CUA CUA.jpg"},
+  {id:"24",name:"DE TODITO PICANTE",category:"Snacks",stock:8,machineStock:4,price:0.85,suppliers:{DULCEZA:{cost:0.63,qty:8}},salesCount:0,totalSales:0,image:"./PRODUCTOS/de todito picante.jpg"},
+  {id:"25",name:"CHOCO CHIPS MINI",category:"Galletas",stock:6,machineStock:3,price:0.50,suppliers:{DULCEZA:{cost:0.39,qty:6}},salesCount:0,totalSales:0,image:"./images/choco-chips-mini.png"},
+  {id:"26",name:"DE TODITO NATURAL",category:"Snacks",stock:8,machineStock:4,price:0.85,suppliers:{DULCEZA:{cost:0.63,qty:8}},salesCount:0,totalSales:0,image:"./PRODUCTOS/de todito natural.png"},
   // SUPERMAXI (5 productos)
-  {id:"27",name:"FORESTEA FRESA LIM",category:"Bebidas",stock:12,price:0.75,suppliers:{SUPERMAXI:{cost:0.3493,qty:6},TITAN:{cost:0.418,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/Forestea Frutos tropicales.png"},
-  {id:"28",name:"BRIZO BEBIDA LIMA",category:"Bebidas",stock:4,price:1.25,suppliers:{SUPERMAXI:{cost:0.5978,qty:4}},salesCount:0,totalSales:0,image:"./PRODUCTOS/V220 DE LIMA.jpg"},
-  {id:"29",name:"IMPERIAL LATA LIMONADA",category:"Bebidas",stock:10,price:1.50,suppliers:{SUPERMAXI:{cost:0.8565,qty:10}},salesCount:0,totalSales:0,image:"./PRODUCTOS/IMPERIAL LIMON LATA.png"},
-  {id:"30",name:"SAVILOE",category:"Bebidas",stock:6,price:1.00,suppliers:{SUPERMAXI:{cost:0.63,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/SAVILOE.png"},
-  {id:"31",name:"COCA COLA LATA",category:"Bebidas",stock:8,price:1.50,suppliers:{SUPERMAXI:{cost:0.8812,qty:8}},salesCount:0,totalSales:0,image:"./PRODUCTOS/SPRITE.png"},
+  {id:"27",name:"FORESTEA FRESA LIM",category:"Bebidas",stock:12,machineStock:6,price:0.75,suppliers:{SUPERMAXI:{cost:0.3493,qty:6},TITAN:{cost:0.418,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/Forestea Frutos tropicales.png"},
+  {id:"28",name:"BRIZO BEBIDA LIMA",category:"Bebidas",stock:4,machineStock:2,price:1.25,suppliers:{SUPERMAXI:{cost:0.5978,qty:4}},salesCount:0,totalSales:0,image:"./PRODUCTOS/V220 DE LIMA.jpg"},
+  {id:"29",name:"IMPERIAL LATA LIMONADA",category:"Bebidas",stock:10,machineStock:5,price:1.50,suppliers:{SUPERMAXI:{cost:0.8565,qty:10}},salesCount:0,totalSales:0,image:"./PRODUCTOS/IMPERIAL LIMON LATA.png"},
+  {id:"30",name:"SAVILOE",category:"Bebidas",stock:6,machineStock:3,price:1.00,suppliers:{SUPERMAXI:{cost:0.63,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/SAVILOE.png"},
+  {id:"31",name:"COCA COLA LATA",category:"Bebidas",stock:8,machineStock:4,price:1.50,suppliers:{SUPERMAXI:{cost:0.8812,qty:8}},salesCount:0,totalSales:0,image:"./PRODUCTOS/SPRITE.png"},
   // TITAN (productos únicos)
-  {id:"32",name:"PIPA NIC",category:"Snacks",stock:24,price:0.30,suppliers:{TITAN:{cost:0.175,qty:24}},salesCount:0,totalSales:0,image:"./PRODUCTOS/NATU CHIPS.png"},
-  {id:"33",name:"NUTELLA B READ",category:"Chocolates",stock:10,price:0.75,suppliers:{TITAN:{cost:0.649,qty:10}},salesCount:0,totalSales:0,image:"./PRODUCTOS/NUTELLA B READY.jpg"},
-  {id:"34",name:"CHETOS CHEESE TRI",category:"Snacks",stock:12,price:0.30,suppliers:{TITAN:{cost:0.215,qty:12}},salesCount:0,totalSales:0,image:"./PRODUCTOS/cheese tris.jpg"},
-  {id:"35",name:"KINDEY JOY NIN",category:"Chocolates",stock:12,price:1.50,suppliers:{TITAN:{cost:1.0717,qty:12}},salesCount:0,totalSales:0,image:"./PRODUCTOS/KINDER.png"},
-  {id:"36",name:"TOSTITOS NACHOS",category:"Snacks",stock:6,price:0.75,suppliers:{TITAN:{cost:0.555,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/tostitos nachos.jpg"},
-  {id:"37",name:"MONSTER ULTRA",category:"Bebidas",stock:6,price:3.00,suppliers:{TITAN:{cost:2.456,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/monster energy.png"},
-  {id:"38",name:"PULP DURAZNO",category:"Bebidas",stock:12,price:0.50,suppliers:{TITAN:{cost:0.325,qty:12}},salesCount:0,totalSales:0,image:"./PRODUCTOS/PULP.jpg"},
-  {id:"39",name:"ALPINA BONYOURT",category:"Lácteos",stock:3,price:1.00,suppliers:{TITAN:{cost:0.793,qty:3}},salesCount:0,totalSales:0,image:"./PRODUCTOS/BON YOURT.jpg"},
-  {id:"40",name:"DORITOS LIM GRANDE",category:"Snacks",stock:8,price:1.00,suppliers:{TITAN:{cost:0.827,qty:8}},salesCount:0,totalSales:0,image:"./PRODUCTOS/doritos limon.png"},
-  {id:"41",name:"LAYS ARTESANAS",category:"Snacks",stock:6,price:0.65,suppliers:{TITAN:{cost:0.481,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/LAYS ARTESANALES.png"},
-  {id:"42",name:"EL ARTESANAL CEBOLLA Y CREMA",category:"Snacks",stock:6,price:0.65,suppliers:{TITAN:{cost:0.303,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/PAPAS ARTESANALES CREMA Y CEBOLLA.png"},
-  {id:"43",name:"IMPERIAL AGUA PEQUEÑA LIMON",category:"Bebidas",stock:6,price:0.50,suppliers:{TITAN:{cost:0.418,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/IMPERIAL LIMON PEQUE.png"},
-  {id:"44",name:"BIRI BIRI",category:"Snacks",stock:6,price:1.00,suppliers:{TITAN:{cost:0.845,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/BIRI BIRI.png"},
-  {id:"45",name:"CHIPS AHOY PEQUEÑAS",category:"Galletas",stock:6,price:0.50,suppliers:{TITAN:{cost:0.455,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/CHIPS AHOY 50.jpg"},
-  {id:"46",name:"FESTIVAL GALLETA FRESA",category:"Galletas",stock:6,price:0.50,suppliers:{TITAN:{cost:0.281,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/FEDTIVAL FRESA.png"},
-  {id:"47",name:"PULPARINDO SANDIA",category:"Dulces",stock:20,price:0.60,suppliers:{TITAN:{cost:0.29,qty:20}},salesCount:0,totalSales:0,image:"./PRODUCTOS/PULPARINDO.png"},
-  {id:"48",name:"220 ORIGINAL PEQUEÑO",category:"Snacks",stock:24,price:0.50,suppliers:{TITAN:{cost:0.441,qty:24}},salesCount:0,totalSales:0,image:"./PRODUCTOS/V220 PEQUEÑO.png"}
+  {id:"32",name:"PIPA NIC",category:"Snacks",stock:24,machineStock:12,price:0.30,suppliers:{TITAN:{cost:0.175,qty:24}},salesCount:0,totalSales:0,image:"./PRODUCTOS/NATU CHIPS.png"},
+  {id:"33",name:"NUTELLA B READ",category:"Chocolates",stock:10,machineStock:5,price:0.75,suppliers:{TITAN:{cost:0.649,qty:10}},salesCount:0,totalSales:0,image:"./PRODUCTOS/NUTELLA B READY.jpg"},
+  {id:"34",name:"CHETOS CHEESE TRI",category:"Snacks",stock:12,machineStock:6,price:0.30,suppliers:{TITAN:{cost:0.215,qty:12}},salesCount:0,totalSales:0,image:"./PRODUCTOS/cheese tris.jpg"},
+  {id:"35",name:"KINDEY JOY NIN",category:"Chocolates",stock:12,machineStock:6,price:1.50,suppliers:{TITAN:{cost:1.0717,qty:12}},salesCount:0,totalSales:0,image:"./PRODUCTOS/KINDER.png"},
+  {id:"36",name:"TOSTITOS NACHOS",category:"Snacks",stock:6,machineStock:3,price:0.75,suppliers:{TITAN:{cost:0.555,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/tostitos nachos.jpg"},
+  {id:"37",name:"MONSTER ULTRA",category:"Bebidas",stock:6,machineStock:3,price:3.00,suppliers:{TITAN:{cost:2.456,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/monster energy.png"},
+  {id:"38",name:"PULP DURAZNO",category:"Bebidas",stock:12,machineStock:6,price:0.50,suppliers:{TITAN:{cost:0.325,qty:12}},salesCount:0,totalSales:0,image:"./PRODUCTOS/PULP.jpg"},
+  {id:"39",name:"ALPINA BONYOURT",category:"Lácteos",stock:3,machineStock:2,price:1.00,suppliers:{TITAN:{cost:0.793,qty:3}},salesCount:0,totalSales:0,image:"./PRODUCTOS/BON YOURT.jpg"},
+  {id:"40",name:"DORITOS LIM GRANDE",category:"Snacks",stock:8,machineStock:4,price:1.00,suppliers:{TITAN:{cost:0.827,qty:8}},salesCount:0,totalSales:0,image:"./PRODUCTOS/doritos limon.png"},
+  {id:"41",name:"LAYS ARTESANAS",category:"Snacks",stock:6,machineStock:3,price:0.65,suppliers:{TITAN:{cost:0.481,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/LAYS ARTESANALES.png"},
+  {id:"42",name:"EL ARTESANAL CEBOLLA Y CREMA",category:"Snacks",stock:6,machineStock:3,price:0.65,suppliers:{TITAN:{cost:0.303,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/PAPAS ARTESANALES CREMA Y CEBOLLA.png"},
+  {id:"43",name:"IMPERIAL AGUA PEQUEÑA LIMON",category:"Bebidas",stock:6,machineStock:3,price:0.50,suppliers:{TITAN:{cost:0.418,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/IMPERIAL LIMON PEQUE.png"},
+  {id:"44",name:"BIRI BIRI",category:"Snacks",stock:6,machineStock:3,price:1.00,suppliers:{TITAN:{cost:0.845,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/BIRI BIRI.png"},
+  {id:"45",name:"CHIPS AHOY PEQUEÑAS",category:"Galletas",stock:6,machineStock:3,price:0.50,suppliers:{TITAN:{cost:0.455,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/CHIPS AHOY 50.jpg"},
+  {id:"46",name:"FESTIVAL GALLETA FRESA",category:"Galletas",stock:6,machineStock:3,price:0.50,suppliers:{TITAN:{cost:0.281,qty:6}},salesCount:0,totalSales:0,image:"./PRODUCTOS/FEDTIVAL FRESA.png"},
+  {id:"47",name:"PULPARINDO SANDIA",category:"Dulces",stock:20,machineStock:10,price:0.60,suppliers:{TITAN:{cost:0.29,qty:20}},salesCount:0,totalSales:0,image:"./PRODUCTOS/PULPARINDO.png"},
+  {id:"48",name:"220 ORIGINAL PEQUEÑO",category:"Snacks",stock:24,machineStock:12,price:0.50,suppliers:{TITAN:{cost:0.441,qty:24}},salesCount:0,totalSales:0,image:"./PRODUCTOS/V220 PEQUEÑO.png"}
 ];
 
 const INITIAL_SUPPLIERS = [
@@ -134,7 +139,7 @@ function getAvgCost(product){
 }
 
 // ============================================================
-// COMPONENTE: IMAGEN SEGURA (no destruye el DOM al fallar)
+// COMPONENTE: IMAGEN SEGURA
 // ============================================================
 function SafeImage({src,alt,className}){
   const [error,setError]=useState(false);
@@ -185,13 +190,13 @@ function TopNav({page,setPage}){
 }
 
 // ---------- MÁQUINA ----------
-// ---------- MÁQUINA ----------
 function MachinePage({products,setProducts}){
   const [filter,setFilter]=useState("");
   const [cat,setCat]=useState("Todas");
   const [search,setSearch]=useState("");
   const [sellModal,setSellModal]=useState(null);
-  const [infoModal,setInfoModal]=useState(null); // Modal de información detallada
+  const [infoModal,setInfoModal]=useState(null);
+  const [transferModal,setTransferModal]=useState(null);
 
   const timerRef = React.useRef(null);
   const isLongPress = React.useRef(false);
@@ -199,13 +204,12 @@ function MachinePage({products,setProducts}){
   const cats=["Todas",...new Set(products.map(p=>p.category))];
   const filtered=products.filter(p=>(cat==="Todas"||p.category===cat)&&p.name.toLowerCase().includes(filter.toLowerCase())&&p.name.toLowerCase().includes(search.toLowerCase()));
 
-  // Manejadores para Long Press (mantener presionado)
   const handleTouchStart = (product) => {
     isLongPress.current = false;
     timerRef.current = setTimeout(() => {
       isLongPress.current = true;
-      setInfoModal(product); // Abre modal de información
-    }, 500); // 500ms para detectar pulsación larga
+      setInfoModal(product);
+    }, 500);
   };
 
   const handleTouchEnd = () => {
@@ -215,17 +219,17 @@ function MachinePage({products,setProducts}){
   };
 
   const openSellModal=(product)=>{
-    // Si fue pulsación larga, evita abrir la venta inmediatamente
     if (isLongPress.current) return;
     setSellModal({product,qty:1});
   };
 
   const closeSellModal=()=>{setSellModal(null);};
   const closeInfoModal=()=>{setInfoModal(null);};
+  const closeTransferModal=()=>{setTransferModal(null);};
 
   const adjustQty=(delta)=>{
     if(!sellModal)return;
-    const max=sellModal.product.stock;
+    const max=sellModal.product.machineStock;
     const next=Math.max(1,Math.min(max,sellModal.qty+delta));
     setSellModal({...sellModal,qty:next});
   };
@@ -234,13 +238,50 @@ function MachinePage({products,setProducts}){
     if(!sellModal||sellModal.qty<1)return;
     const {product,qty}=sellModal;
     setProducts(prev=>prev.map(p=>{
-      if(p.id!==product.id||p.stock<qty)return p;
+      if(p.id!==product.id||p.machineStock<qty)return p;
       const best=getBestSupplier(p);
       const cost=best?best[1].cost:getAvgCost(p);
       const revenue=qty*p.price;
-      return{...p,stock:p.stock-qty,salesCount:p.salesCount+qty,totalSales:p.totalSales+revenue};
+      // Descuenta de machineStock y del stock total
+      return{...p, stock:p.stock-qty, machineStock:p.machineStock-qty, salesCount:p.salesCount+qty, totalSales:p.totalSales+revenue};
     }));
     setSellModal(null);
+  };
+
+  // Transferir entre almacén y máquina
+  const openTransferModal=(product)=>{
+    setTransferModal({product,qty:1,direction:"to-machine"});
+  };
+
+  const adjustTransferQty=(delta)=>{
+    if(!transferModal)return;
+    const max = transferModal.direction === "to-machine" 
+      ? (transferModal.product.stock - transferModal.product.machineStock) // almacén disponible
+      : transferModal.product.machineStock; // en máquina
+    const next=Math.max(1,Math.min(max,transferModal.qty+delta));
+    setTransferModal({...transferModal,qty:next});
+  };
+
+  const switchTransferDirection=()=>{
+    if(!transferModal)return;
+    setTransferModal({...transferModal, direction: transferModal.direction==="to-machine"?"to-warehouse":"to-machine", qty:1});
+  };
+
+  const confirmTransfer=()=>{
+    if(!transferModal||transferModal.qty<1)return;
+    const {product,qty,direction}=transferModal;
+    setProducts(prev=>prev.map(p=>{
+      if(p.id!==product.id)return p;
+      if(direction==="to-machine"){
+        const warehouse = p.stock - p.machineStock;
+        if(warehouse < qty) return p;
+        return {...p, machineStock: p.machineStock + qty};
+      }else{
+        if(p.machineStock < qty) return p;
+        return {...p, machineStock: p.machineStock - qty};
+      }
+    }));
+    setTransferModal(null);
   };
 
   return (
@@ -264,6 +305,7 @@ function MachinePage({products,setProducts}){
           const best=getBestSupplier(p);
           const cost=best?best[1].cost:getAvgCost(p);
           const margin=((p.price-cost)/p.price*100).toFixed(1);
+          const warehouseStock = p.stock - p.machineStock;
           return (
             <div 
               key={p.id} 
@@ -278,9 +320,16 @@ function MachinePage({products,setProducts}){
                 <div className="w-full h-32 rounded-lg overflow-hidden bg-white/5 flex items-center justify-center">
                   <SafeImage src={p.image} alt={p.name} className="h-full w-full object-contain p-1" />
                 </div>
-                <span className={`absolute top-1.5 left-1.5 text-[10px] px-2 py-0.5 rounded-full font-bold shadow-lg ${p.stock>5?"bg-emerald-500 text-white":p.stock>0?"bg-amber-500 text-white":"bg-red-500 text-white"}`}>
-                  {p.stock} uds
+                {/* Badge de stock en máquina */}
+                <span className={`absolute top-1.5 left-1.5 text-[10px] px-2 py-0.5 rounded-full font-bold shadow-lg ${p.machineStock>5?"bg-emerald-500 text-white":p.machineStock>0?"bg-amber-500 text-white":"bg-red-500 text-white"}`}>
+                  🏧 {p.machineStock}
                 </span>
+                {/* Badge de stock en almacén */}
+                {warehouseStock > 0 && (
+                  <span className="absolute bottom-1.5 left-1.5 text-[9px] px-2 py-0.5 rounded-full font-bold shadow-lg bg-blue-500/90 text-white">
+                    📦 {warehouseStock}
+                  </span>
+                )}
                 <span className="absolute top-1.5 right-1.5 text-[9px] px-1.5 py-0.5 rounded-full bg-slate-900/80 text-slate-300 font-medium backdrop-blur-sm">
                   {p.category}
                 </span>
@@ -299,10 +348,17 @@ function MachinePage({products,setProducts}){
                 </div>
               </div>
 
-              <button onClick={()=>openSellModal(p)} disabled={p.stock<=0}
-                className={`w-full py-2.5 rounded-lg text-xs font-bold transition mt-auto ${p.stock>0?"bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/20":"bg-slate-700 text-slate-500 cursor-not-allowed"}`}>
-                {p.stock>0?"💵 VENDER":"❌ AGOTADO"}
-              </button>
+              <div className="flex gap-2 mt-auto">
+                <button onClick={()=>openSellModal(p)} disabled={p.machineStock<=0}
+                  className={`flex-1 py-2 rounded-lg text-xs font-bold transition ${p.machineStock>0?"bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/20":"bg-slate-700 text-slate-500 cursor-not-allowed"}`}>
+                  {p.machineStock>0?"💵 VENDER":"❌ AGOTADO"}
+                </button>
+                <button onClick={()=>openTransferModal(p)}
+                  className="px-2 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold transition"
+                  title="Mover stock">
+                  🔄
+                </button>
+              </div>
             </div>
           );
         })}
@@ -313,7 +369,7 @@ function MachinePage({products,setProducts}){
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4" onClick={closeSellModal}>
           <div className="bg-slate-800 rounded-2xl border border-slate-600 p-5 w-full max-w-sm shadow-2xl" onClick={e=>e.stopPropagation()}>
             <h3 className="text-lg font-bold text-white mb-1">{sellModal.product.name}</h3>
-            <p className="text-xs text-slate-400 mb-4">Precio: {fmtMoney(sellModal.product.price)} c/u • Stock: {sellModal.product.stock} uds</p>
+            <p className="text-xs text-slate-400 mb-4">Precio: {fmtMoney(sellModal.product.price)} c/u • En máquina: {sellModal.product.machineStock} uds • Almacén: {sellModal.product.stock - sellModal.product.machineStock} uds</p>
 
             <div className="flex items-center justify-center gap-4 mb-5">
               <button onClick={()=>adjustQty(-1)} className="w-12 h-12 rounded-xl bg-slate-700 hover:bg-slate-600 text-white text-xl font-bold transition flex items-center justify-center">−</button>
@@ -345,6 +401,46 @@ function MachinePage({products,setProducts}){
         </div>
       )}
 
+      {/* Modal de Transferencia Almacén ↔ Máquina */}
+      {transferModal&&(
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4" onClick={closeTransferModal}>
+          <div className="bg-slate-800 rounded-2xl border border-slate-600 p-5 w-full max-w-sm shadow-2xl" onClick={e=>e.stopPropagation()}>
+            <h3 className="text-lg font-bold text-white mb-1">🔄 Mover Stock</h3>
+            <p className="text-xs text-slate-400 mb-4">{transferModal.product.name}</p>
+
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className={`text-center px-3 py-2 rounded-lg ${transferModal.direction==="to-warehouse"?"bg-blue-500/20 border border-blue-500/30":"bg-slate-900"}`}>
+                <div className="text-[10px] text-slate-400">🏧 Máquina</div>
+                <div className="text-lg font-bold text-white">{transferModal.product.machineStock}</div>
+              </div>
+              <button onClick={switchTransferDirection} className="px-3 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-sm font-bold transition">
+                {transferModal.direction==="to-machine"?"→":"←"}
+              </button>
+              <div className={`text-center px-3 py-2 rounded-lg ${transferModal.direction==="to-machine"?"bg-blue-500/20 border border-blue-500/30":"bg-slate-900"}`}>
+                <div className="text-[10px] text-slate-400">📦 Almacén</div>
+                <div className="text-lg font-bold text-white">{transferModal.product.stock - transferModal.product.machineStock}</div>
+              </div>
+            </div>
+
+            <div className="text-center mb-4">
+              <div className="text-xs text-slate-400 mb-2">
+                {transferModal.direction==="to-machine"?"Pasar a la máquina":"Retirar de la máquina"}
+              </div>
+              <div className="flex items-center justify-center gap-4">
+                <button onClick={()=>adjustTransferQty(-1)} className="w-10 h-10 rounded-xl bg-slate-700 hover:bg-slate-600 text-white text-lg font-bold transition flex items-center justify-center">−</button>
+                <div className="text-2xl font-bold text-white w-12 text-center">{transferModal.qty}</div>
+                <button onClick={()=>adjustTransferQty(1)} className="w-10 h-10 rounded-xl bg-slate-700 hover:bg-slate-600 text-white text-lg font-bold transition flex items-center justify-center">+</button>
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              <button onClick={closeTransferModal} className="flex-1 py-2.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-sm font-semibold transition">Cancelar</button>
+              <button onClick={confirmTransfer} className="flex-1 py-2.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold transition">✅ Confirmar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Modal de Información Ampliada (Long-Press) */}
       {infoModal&&(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md px-4" onClick={closeInfoModal}>
@@ -363,6 +459,7 @@ function MachinePage({products,setProducts}){
               const cost = best ? best[1].cost : getAvgCost(infoModal);
               const totalCost = cost * infoModal.salesCount;
               const totalProfit = infoModal.totalSales - totalCost;
+              const warehouseStock = infoModal.stock - infoModal.machineStock;
               return (
                 <div className="grid grid-cols-2 gap-2 text-xs mb-4">
                   <div className="bg-slate-900/60 p-2.5 rounded-lg">
@@ -370,8 +467,16 @@ function MachinePage({products,setProducts}){
                     <span className="text-base font-bold text-emerald-400">{fmtMoney(infoModal.price)}</span>
                   </div>
                   <div className="bg-slate-900/60 p-2.5 rounded-lg">
-                    <span className="text-slate-400 block text-[10px]">Stock Disponible</span>
-                    <span className="text-base font-bold text-white">{infoModal.stock} uds</span>
+                    <span className="text-slate-400 block text-[10px]">🏧 En Máquina</span>
+                    <span className="text-base font-bold text-white">{infoModal.machineStock} uds</span>
+                  </div>
+                  <div className="bg-slate-900/60 p-2.5 rounded-lg">
+                    <span className="text-slate-400 block text-[10px]">📦 En Almacén</span>
+                    <span className="text-base font-bold text-blue-400">{warehouseStock} uds</span>
+                  </div>
+                  <div className="bg-slate-900/60 p-2.5 rounded-lg">
+                    <span className="text-slate-400 block text-[10px]">Stock Total</span>
+                    <span className="text-base font-bold text-slate-200">{infoModal.stock} uds</span>
                   </div>
                   <div className="bg-slate-900/60 p-2.5 rounded-lg">
                     <span className="text-slate-400 block text-[10px]">Ventas Realizadas</span>
@@ -421,6 +526,8 @@ function MachinePage({products,setProducts}){
 // ---------- RESUMEN ----------
 function ResumenPage({products}){
   const totalStock=products.reduce((s,p)=>s+p.stock,0);
+  const totalMachine=products.reduce((s,p)=>s+p.machineStock,0);
+  const totalWarehouse=products.reduce((s,p)=>s+(p.stock-p.machineStock),0);
   const totalSales=products.reduce((s,p)=>s+p.totalSales,0);
   const totalSold=products.reduce((s,p)=>s+p.salesCount,0);
   const inventoryValue=products.reduce((s,p)=>{
@@ -430,16 +537,26 @@ function ResumenPage({products}){
   },0);
   const potentialRevenue=products.reduce((s,p)=>s+(p.price*p.stock),0);
   const topProducts=[...products].sort((a,b)=>b.salesCount-a.salesCount).slice(0,5);
-  const lowStock=products.filter(p=>p.stock<=3);
+  const lowStock=products.filter(p=>p.machineStock<=3);
 
   return (
     <div className="max-w-6xl mx-auto px-3 py-4 safe-bottom">
       <h2 className="text-xl font-bold text-white mb-4">📊 Dashboard General</h2>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
         <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-          <div className="text-xs text-slate-400 mb-1">Stock Total</div>
+          <div className="text-xs text-slate-400 mb-1">🏧 En Máquina</div>
+          <div className="text-2xl font-bold text-emerald-400">{totalMachine}</div>
+          <div className="text-[10px] text-slate-500">unidades listas para vender</div>
+        </div>
+        <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
+          <div className="text-xs text-slate-400 mb-1">📦 En Almacén</div>
+          <div className="text-2xl font-bold text-blue-400">{totalWarehouse}</div>
+          <div className="text-[10px] text-slate-500">unidades en reserva</div>
+        </div>
+        <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
+          <div className="text-xs text-slate-400 mb-1">📦 Stock Total</div>
           <div className="text-2xl font-bold text-white">{totalStock}</div>
-          <div className="text-[10px] text-slate-500">unidades</div>
+          <div className="text-[10px] text-slate-500">unidades totales</div>
         </div>
         <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
           <div className="text-xs text-slate-400 mb-1">Ventas Totales</div>
@@ -472,11 +589,14 @@ function ResumenPage({products}){
           ))}
         </div>
         <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-          <h3 className="text-sm font-bold text-white mb-3">⚠️ Stock Bajo (≤3)</h3>
+          <h3 className="text-sm font-bold text-white mb-3">⚠️ Stock Bajo en Máquina (≤3)</h3>
           {lowStock.length?lowStock.map(p=> (
             <div key={p.id} className="flex items-center justify-between py-2 border-b border-slate-700 last:border-0">
-              <span className="text-sm text-slate-200">{p.name}</span>
-              <span className="text-sm font-bold text-red-400">{p.stock} uds</span>
+              <div>
+                <span className="text-sm text-slate-200">{p.name}</span>
+                <span className="text-[10px] text-slate-500 ml-2">(📦 {p.stock-p.machineStock} en almacén)</span>
+              </div>
+              <span className="text-sm font-bold text-red-400">{p.machineStock} uds</span>
             </div>
           )):<p className="text-sm text-slate-500">Todo en orden ✅</p>}
         </div>
@@ -610,7 +730,8 @@ function FacturasPage({products,setProducts}){
     setProducts(prev=>prev.map(p=>{
       if(p.id!==form.productId)return p;
       const sup=p.suppliers[form.supplier]||{cost:parseFloat(form.cost),qty:0};
-      return{...p,stock:p.stock+parseInt(form.qty),suppliers:{...p.suppliers,[form.supplier]:{cost:parseFloat(form.cost),qty:(sup.qty||0)+parseInt(form.qty)}}};
+      // Las compras nuevas van al almacén (stock total aumenta, machineStock no cambia)
+      return{...p, stock:p.stock+parseInt(form.qty), suppliers:{...p.suppliers,[form.supplier]:{cost:parseFloat(form.cost),qty:(sup.qty||0)+parseInt(form.qty)}}};
     }));
     setShowForm(false);
     setForm({supplier:"DULCEZA",productId:"",qty:1,cost:0});
@@ -638,6 +759,7 @@ function FacturasPage({products,setProducts}){
             <input type="number" min="1" value={form.qty} onChange={e=>setForm({...form,qty:e.target.value})} placeholder="Cantidad" className="bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white" />
             <input type="number" step="0.01" value={form.cost} onChange={e=>setForm({...form,cost:e.target.value})} placeholder="Costo unitario" className="bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white" />
           </div>
+          <p className="text-[10px] text-slate-400 mt-2">💡 Las compras nuevas se agregan al almacén. Luego transfiérelas a la máquina desde el panel "Máquina".</p>
           <button onClick={addInvoice} className="mt-3 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition w-full sm:w-auto">Guardar Compra</button>
         </div>
       )}
@@ -681,13 +803,15 @@ function InformesPage({products}){
   // Por categoría
   const byCategory={};
   products.forEach(p=>{
-    if(!byCategory[p.category])byCategory[p.category]={sales:0,cost:0,profit:0,count:0};
+    if(!byCategory[p.category])byCategory[p.category]={sales:0,cost:0,profit:0,count:0,machine:0,warehouse:0};
     const best=getBestSupplier(p);
     const cost=best?best[1].cost:getAvgCost(p);
     byCategory[p.category].sales+=p.totalSales;
     byCategory[p.category].cost+=cost*p.salesCount;
     byCategory[p.category].profit+=p.totalSales-(cost*p.salesCount);
     byCategory[p.category].count+=p.salesCount;
+    byCategory[p.category].machine+=p.machineStock;
+    byCategory[p.category].warehouse+=(p.stock-p.machineStock);
   });
 
   // Por proveedor
@@ -732,9 +856,13 @@ function InformesPage({products}){
                 <span className="text-sm text-slate-200">{cat}</span>
                 <span className="text-xs font-bold text-emerald-400">{fmtMoney(data.profit)}</span>
               </div>
-              <div className="flex justify-between text-[10px] text-slate-500">
+              <div className="flex justify-between text-[10px] text-slate-500 mb-1">
                 <span>Ventas: {fmtMoney(data.sales)}</span>
                 <span>{data.count} uds vendidas</span>
+              </div>
+              <div className="flex gap-2 text-[10px]">
+                <span className="text-emerald-400">🏧 {data.machine} en máquina</span>
+                <span className="text-blue-400">📦 {data.warehouse} en almacén</span>
               </div>
               <div className="w-full bg-slate-700 rounded-full h-1.5 mt-1">
                 <div className="bg-emerald-500 h-1.5 rounded-full" style={{width:Math.min(100,(data.profit/Math.max(...Object.values(byCategory).map(d=>d.profit)))*100)+"%"}}></div>
@@ -745,10 +873,6 @@ function InformesPage({products}){
             <div className="flex justify-between items-center">
               <span className="text-sm font-bold text-white">TOTAL</span>
               <span className="text-sm font-bold text-emerald-400">{fmtMoney(Object.values(byCategory).reduce((s,d)=>s+d.profit,0))}</span>
-            </div>
-            <div className="flex justify-between text-[10px] text-slate-500 mt-1">
-              <span>Ventas totales: {fmtMoney(Object.values(byCategory).reduce((s,d)=>s+d.sales,0))}</span>
-              <span>{Object.values(byCategory).reduce((s,d)=>s+d.count,0)} uds vendidas</span>
             </div>
           </div>
         </div>
@@ -778,6 +902,8 @@ function InformesPage({products}){
             <thead>
               <tr className="text-slate-400 border-b border-slate-700">
                 <th className="text-left py-2">Producto</th>
+                <th className="text-right py-2">🏧 Máq.</th>
+                <th className="text-right py-2">📦 Alm.</th>
                 <th className="text-right py-2">Vendido</th>
                 <th className="text-right py-2">Ingresos</th>
                 <th className="text-right py-2">Costo</th>
@@ -798,6 +924,8 @@ function InformesPage({products}){
                 return (
                   <tr key={p.id} className="border-b border-slate-700/50">
                     <td className="py-2 text-slate-200">{p.name}</td>
+                    <td className="py-2 text-right text-emerald-400">{p.machineStock}</td>
+                    <td className="py-2 text-right text-blue-400">{p.stock-p.machineStock}</td>
                     <td className="py-2 text-right text-slate-400">{p.salesCount}</td>
                     <td className="py-2 text-right text-emerald-400">{fmtMoney(revenue)}</td>
                     <td className="py-2 text-right text-red-400">-{fmtMoney(costTotal)}</td>
@@ -823,6 +951,7 @@ function PresupuestoPage({products,setProducts}){
     const profit=p.price-cost;
     const sellRate=p.salesCount>0?p.salesCount:0.1;
     const dailySales=sellRate;
+    const warehouseStock = p.stock - p.machineStock;
 
     let recommendedQty=0;
     let status="normal";
@@ -849,7 +978,7 @@ function PresupuestoPage({products,setProducts}){
     recommendedQty=Math.max(0,recommendedQty);
     const investment=recommendedQty*cost;
 
-    return{...p,bestSupplier:best?best[0]:"",cost,profit,status,message,recommendedQty,investment,dailySales};
+    return{...p,bestSupplier:best?best[0]:"",cost,profit,status,message,recommendedQty,investment,dailySales,warehouseStock};
   }).sort((a,b)=>{
     const priority={hot:3,normal:2,slow:1,"low-demand":0};
     return priority[b.status]-priority[a.status];
@@ -904,10 +1033,14 @@ function PresupuestoPage({products,setProducts}){
               </span>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2">
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-2">
               <div className="bg-slate-900/50 rounded-lg p-2 text-center">
-                <div className="text-[10px] text-slate-400">Stock</div>
-                <div className="text-sm font-bold text-white">{r.stock}</div>
+                <div className="text-[10px] text-slate-400">🏧 Máquina</div>
+                <div className="text-sm font-bold text-emerald-400">{r.machineStock}</div>
+              </div>
+              <div className="bg-slate-900/50 rounded-lg p-2 text-center">
+                <div className="text-[10px] text-slate-400">📦 Almacén</div>
+                <div className="text-sm font-bold text-blue-400">{r.warehouseStock}</div>
               </div>
               <div className="bg-slate-900/50 rounded-lg p-2 text-center">
                 <div className="text-[10px] text-slate-400">Vendidos</div>
@@ -940,7 +1073,7 @@ function PresupuestoPage({products,setProducts}){
 function DatabasePage({products,setProducts}){
   const [filter,setFilter]=useState("");
   const [showForm,setShowForm]=useState(false);
-  const [newProduct,setNewProduct]=useState({name:"",category:"Bebidas",stock:0,price:0,supplier:"DULCEZA",cost:0});
+  const [newProduct,setNewProduct]=useState({name:"",category:"Bebidas",stock:0,machineStock:0,price:0,supplier:"DULCEZA",cost:0});
   const filtered=products.filter(p=>p.name.toLowerCase().includes(filter.toLowerCase()));
 
   const categories=["Bebidas","Lácteos","Dulces","Chocolates","Galletas","Snacks"];
@@ -949,18 +1082,21 @@ function DatabasePage({products,setProducts}){
   const addProduct=()=>{
     if(!newProduct.name||newProduct.price<=0)return;
     const id=(Math.max(...products.map(p=>parseInt(p.id)),0)+1).toString();
+    const stockVal = parseInt(newProduct.stock)||0;
+    const machineVal = Math.min(parseInt(newProduct.machineStock)||0, stockVal);
     const prod={
       id,
       name:newProduct.name.toUpperCase(),
       category:newProduct.category,
-      stock:parseInt(newProduct.stock)||0,
+      stock:stockVal,
+      machineStock:machineVal,
       price:parseFloat(newProduct.price),
-      suppliers:{[newProduct.supplier]:{cost:parseFloat(newProduct.cost)||0,qty:parseInt(newProduct.stock)||0}},
+      suppliers:{[newProduct.supplier]:{cost:parseFloat(newProduct.cost)||0,qty:stockVal}},
       salesCount:0,
       totalSales:0
     };
     setProducts(prev=>[...prev,prod]);
-    setNewProduct({name:"",category:"Bebidas",stock:0,price:0,supplier:"DULCEZA",cost:0});
+    setNewProduct({name:"",category:"Bebidas",stock:0,machineStock:0,price:0,supplier:"DULCEZA",cost:0});
     setShowForm(false);
   };
 
@@ -984,7 +1120,8 @@ function DatabasePage({products,setProducts}){
             <select value={newProduct.category} onChange={e=>setNewProduct({...newProduct,category:e.target.value})} className="bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white">
               {categories.map(c=><option key={c} value={c}>{c}</option>)}
             </select>
-            <input type="number" min="0" value={newProduct.stock} onChange={e=>setNewProduct({...newProduct,stock:e.target.value})} placeholder="Stock inicial" className="bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white" />
+            <input type="number" min="0" value={newProduct.stock} onChange={e=>setNewProduct({...newProduct,stock:e.target.value})} placeholder="Stock total inicial" className="bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white" />
+            <input type="number" min="0" value={newProduct.machineStock} onChange={e=>setNewProduct({...newProduct,machineStock:e.target.value})} placeholder="Stock en máquina" className="bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white" />
             <input type="number" step="0.01" min="0" value={newProduct.price} onChange={e=>setNewProduct({...newProduct,price:e.target.value})} placeholder="Precio de venta" className="bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white" />
             <select value={newProduct.supplier} onChange={e=>setNewProduct({...newProduct,supplier:e.target.value})} className="bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white">
               {suppliersList.map(s=><option key={s} value={s}>{s}</option>)}
@@ -1006,7 +1143,9 @@ function DatabasePage({products,setProducts}){
               <tr className="text-slate-400 border-b border-slate-700 bg-slate-900/50">
                 <th className="text-left py-3 px-3">Producto</th>
                 <th className="text-left py-3 px-3">Categoría</th>
-                <th className="text-right py-3 px-3">Stock</th>
+                <th className="text-right py-3 px-3">🏧 Máq.</th>
+                <th className="text-right py-3 px-3">📦 Alm.</th>
+                <th className="text-right py-3 px-3">Total</th>
                 <th className="text-right py-3 px-3">Precio Venta</th>
                 <th className="text-right py-3 px-3">Mejor Costo</th>
                 <th className="text-right py-3 px-3">Margen</th>
@@ -1019,11 +1158,14 @@ function DatabasePage({products,setProducts}){
                 const best=getBestSupplier(p);
                 const cost=best?best[1].cost:getAvgCost(p);
                 const margin=((p.price-cost)/p.price*100).toFixed(1);
+                const warehouse = p.stock - p.machineStock;
                 return (
                   <tr key={p.id} className="border-b border-slate-700/50 hover:bg-slate-700/30">
                     <td className="py-2 px-3 text-slate-200 font-medium">{p.name}</td>
                     <td className="py-2 px-3 text-slate-400">{p.category}</td>
-                    <td className="py-2 px-3 text-right text-white">{p.stock}</td>
+                    <td className="py-2 px-3 text-right text-emerald-400">{p.machineStock}</td>
+                    <td className="py-2 px-3 text-right text-blue-400">{warehouse}</td>
+                    <td className="py-2 px-3 text-right text-white font-bold">{p.stock}</td>
                     <td className="py-2 px-3 text-right text-emerald-400">{fmtMoney(p.price)}</td>
                     <td className="py-2 px-3 text-right text-amber-400">{fmtMoney(cost)}</td>
                     <td className="py-2 px-3 text-right text-blue-400">{margin}%</td>
